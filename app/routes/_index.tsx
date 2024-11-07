@@ -57,6 +57,7 @@ export default function Index() {
   const [inputValue, setInputValue] = useState("");
   const [isValidUrl, setIsValidUrl] = useState(true);
   const [particles, setParticles] = useState<Array<{ id: number }>>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setParticles(Array.from({ length: 20 }, (_, i) => ({ id: i })));
@@ -84,8 +85,16 @@ export default function Index() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (!isValidUrl) {
       e.preventDefault();
+    } else {
+      setIsSubmitting(true);
     }
   };
+
+  useEffect(() => {
+    if (actionData) {
+      setIsSubmitting(false);
+    }
+  }, [actionData]);
 
   const handleCopy = async () => {
     if (actionData?.shortUrl) {
@@ -141,11 +150,11 @@ export default function Index() {
                       value={inputValue}
                       onChange={handleInputChange}
                       placeholder="Nhập URL cần rút gọn..."
-                      className={`w-full rounded-xl border p-4 text-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700
+                      className={`w-full rounded-xl border p-4 text-lg transition-all duration-200 focus:ring-2 focus:ring-blue-500 bg-gray-700
                         ${
                           !isValidUrl && inputValue
-                            ? "border-red-500 bg-red-50 dark:bg-red-900/10"
-                            : "border-gray-300 dark:border-gray-600"
+                            ? "border-red-500   bg-red-900/10"
+                            : "border-gray-600"
                         }`}
                       required
                     />
@@ -192,15 +201,95 @@ export default function Index() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    disabled={!isValidUrl || !inputValue}
+                    disabled={!isValidUrl || !inputValue || isSubmitting}
                     className={`w-full rounded-xl px-6 py-4 text-lg font-medium text-white shadow-lg transition-all duration-200
                       ${
-                        !isValidUrl || !inputValue
+                        !isValidUrl || !inputValue || isSubmitting
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       }`}
                   >
-                    Rút gọn URL
+                    <div className="flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
+                          >
+                            <svg
+                              className="h-5 w-5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M12 4.75V6.25"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M17.1266 6.87347L16.0659 7.93413"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M19.25 12L17.75 12"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M17.1266 17.1265L16.0659 16.0659"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M12 19.25V17.75"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M7.9342 16.0659L6.87354 17.1265"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M6.25 12L4.75 12"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M7.9342 7.93413L6.87354 6.87347"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </motion.div>
+                          <span>Đang xử lý...</span>
+                        </>
+                      ) : (
+                        "Rút gọn URL"
+                      )}
+                    </div>
                   </motion.button>
                 </Form>
               </div>

@@ -22,6 +22,7 @@ export const loader: LoaderFunction = async () => {
 export default function Dashboard() {
   const { urls, error } = useLoaderData<typeof loader>();
   const deleteFetcher = useFetcher();
+
   let isAdmin = false;
   if (typeof window !== "undefined") {
     isAdmin = localStorage.getItem("isAdmin") === "true";
@@ -60,15 +61,15 @@ export default function Dashboard() {
           <h1 className="mb-8 text-2xl font-bold">Quản lý URL</h1>
 
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+            <div className="rounded-lg  p-6 shadow bg-gray-800">
               <h3 className="text-lg font-semibold">Tổng số URL</h3>
               <p className="text-3xl font-bold">{stats.totalUrls}</p>
             </div>
-            <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+            <div className="rounded-lg  p-6 shadow bg-gray-800">
               <h3 className="text-lg font-semibold">Tổng lượt click</h3>
               <p className="text-3xl font-bold">{stats.totalClicks}</p>
             </div>
-            <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+            <div className="rounded-lg  p-6 shadow bg-gray-800">
               <h3 className="text-lg font-semibold">Trung bình click/URL</h3>
               <p className="text-3xl font-bold">{stats.averageClicks}</p>
             </div>
@@ -78,7 +79,7 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-800">
+                  <tr className="bg-gray-800">
                     <th className="border p-3 text-left">URL Gốc</th>
                     <th className="border p-3 text-left">URL Rút gọn</th>
                     <th className="border p-3 text-left">Lượt click</th>
@@ -91,13 +92,13 @@ export default function Dashboard() {
                 <tbody>
                   {urls.map(
                     (url: {
-                      id: string;
+                      _id: string;
                       originalUrl: string;
                       shortCode: string;
                       clicks: number;
                       createdAt: Date;
                     }) => (
-                      <tr key={url.id} className="border-b">
+                      <tr key={url._id} className="border-b">
                         <td className="border p-3 max-w-xs truncate">
                           {url.originalUrl}
                         </td>
@@ -117,23 +118,24 @@ export default function Dashboard() {
                         </td>
                         {isAdmin && (
                           <td className="border p-3">
-                            <button
-                              onClick={() => {
+                            <deleteFetcher.Form
+                              method="DELETE"
+                              action={`/api/delete-url?urlId=${url._id}`}
+                              onSubmit={(e) => {
                                 if (
-                                  confirm("Bạn có chắc chắn muốn xóa URL này?")
+                                  !confirm("Bạn có chắc chắn muốn xóa URL này?")
                                 ) {
-                                  const formData = new FormData();
-                                  formData.append("urlId", url.id);
-                                  deleteFetcher.submit(formData, {
-                                    method: "DELETE",
-                                    action: "/api/delete-url",
-                                  });
+                                  e.preventDefault();
                                 }
                               }}
-                              className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                             >
-                              Xóa
-                            </button>
+                              <button
+                                type="submit"
+                                className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                              >
+                                Xóa
+                              </button>
+                            </deleteFetcher.Form>
                           </td>
                         )}
                       </tr>
