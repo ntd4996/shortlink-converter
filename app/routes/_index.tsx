@@ -424,7 +424,7 @@ export default function Index() {
           >
             <motion.div whileHover={{ scale: 1.05 }} className="inline-block">
               <a
-                href="https://github.com/ntd4496"
+                href="https://github.com/ntd4996"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex flex-col items-center"
