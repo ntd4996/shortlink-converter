@@ -1,7 +1,9 @@
 import { LoaderFunction, redirect } from "@remix-run/node";
-import { db } from "~/utils/db.server";
+import connectDB from "~/utils/mongo.server";
+import ShortUrl from "~/models/ShortUrl";
 
 export const loader: LoaderFunction = async ({ params }) => {
+  connectDB();
   const { shortCode } = params;
 
   if (!shortCode) {
@@ -9,19 +11,16 @@ export const loader: LoaderFunction = async ({ params }) => {
   }
 
   try {
-    const shortUrl = await db.shortUrl.findUnique({
-      where: { shortCode },
-    });
+    const shortUrl = await ShortUrl.findOne({ shortCode }).exec();
 
     if (!shortUrl) {
       throw new Response("Not Found", { status: 404 });
     }
 
-    // Tăng số lượt click
-    await db.shortUrl.update({
-      where: { id: shortUrl.id },
-      data: { clicks: { increment: 1 } },
-    });
+    await ShortUrl.updateOne(
+      { _id: shortUrl._id },
+      { $inc: { clicks: 1 } }
+    ).exec();
 
     return redirect(shortUrl.originalUrl);
   } catch (error) {

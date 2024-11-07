@@ -41,7 +41,7 @@ export default function AnimatedBackground() {
   if (!isClient) return null;
 
   return (
-    <div className="fixed inset-0  overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-black">
+    <div className="fixed inset-0 z-1 overflow-hidden bg-gradient-to-b from-gray-900 via-gray-900 to-black">
       {/* Smooth floating orbs */}
       {[...Array(3)].map((_, i) => (
         <motion.div

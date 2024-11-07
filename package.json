@@ -3,25 +3,31 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "author": "datnt",
   "scripts": {
     "build": "remix vite:build",
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "vercel-build": "remix vite:build"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
     "@remix-run/node": "^2.13.1",
     "@remix-run/react": "^2.13.1",
     "@remix-run/serve": "^2.13.1",
+    "@vercel/remix": "^2.13.1",
+    "bcryptjs": "^2.4.3",
     "framer-motion": "^11.11.11",
     "isbot": "^4.1.0",
+    "mongoose": "^7.8.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.13.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
@@ -34,7 +40,6 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.38",
-    "prisma": "^5.22.0",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.1.6",
     "vite": "^5.1.0",

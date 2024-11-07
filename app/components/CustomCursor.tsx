@@ -9,10 +9,9 @@ export default function CustomCursor() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
-      
-      // Kiểm tra nếu đang hover trên element có cursor: pointer
+
       const target = e.target as HTMLElement;
-      setIsPointer(window.getComputedStyle(target).cursor === 'pointer');
+      setIsPointer(window.getComputedStyle(target).cursor === "pointer");
     };
 
     const handleMouseEnter = () => setIsVisible(true);
@@ -73,4 +72,4 @@ export default function CustomCursor() {
       </motion.div>
     </>
   );
-} 
+}

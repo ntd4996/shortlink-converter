@@ -2,11 +2,14 @@ import { json, type ActionFunction } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { db } from "~/utils/db.server";
 import { generateShortCode } from "~/utils/shortcode.server";
 import AnimatedBackground from "~/components/AnimatedBackground";
+import ShortUrl from "~/models/ShortUrl";
+import connectDB from "~/utils/mongo.server";
 
 export const action: ActionFunction = async ({ request }) => {
+  await connectDB();
+
   const formData = await request.formData();
   const url = formData.get("url");
 
@@ -15,15 +18,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    // Validate URL
     new URL(url);
 
     const shortCode = generateShortCode();
-    await db.shortUrl.create({
-      data: {
-        originalUrl: url,
-        shortCode,
-      },
+    await ShortUrl.create({
+      originalUrl: url,
+      shortCode,
     });
 
     return json({
@@ -38,8 +38,6 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: "Có lỗi xảy ra" }, { status: 500 });
   }
 };
-
-// Thêm variants cho các animations
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -61,7 +59,6 @@ export default function Index() {
   const [particles, setParticles] = useState<Array<{ id: number }>>([]);
 
   useEffect(() => {
-    // Khởi tạo particles sau khi component mount
     setParticles(Array.from({ length: 20 }, (_, i) => ({ id: i })));
   }, []);
 
@@ -158,7 +155,7 @@ export default function Index() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
-                          className="absolute -bottom-6 left-0 text-sm text-red-500"
+                          className="mt-1 text-sm text-red-500"
                         >
                           URL không hợp lệ. Vui lòng nhập đúng định dạng (vd:
                           https://example.com)
@@ -171,7 +168,7 @@ export default function Index() {
                           initial={{ opacity: 0, scale: 0.5 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.5 }}
-                          className="absolute right-4 top-1/2 -translate-y-1/2"
+                          className="absolute right-4 top-[66px] -translate-y-1/2"
                         >
                           <svg
                             className="h-6 w-6 text-green-500"
@@ -338,7 +335,7 @@ export default function Index() {
           >
             <motion.div whileHover={{ scale: 1.05 }} className="inline-block">
               <a
-                href="https://github.com/ntd4496" // Thay bằng link GitHub của bạn
+                href="https://github.com/ntd4496"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex flex-col items-center"
@@ -397,7 +394,7 @@ export default function Index() {
               transition={{ delay: 0.4 }}
             >
               <motion.a
-                href="https://github.com/ntd4996" // Thay bằng link của bạn
+                href="https://github.com/ntd4996"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, y: -2 }}
@@ -416,7 +413,7 @@ export default function Index() {
                 </svg>
               </motion.a>
               <motion.a
-                href="https://facebook.com/ntd4996" // Thay bằng link của bạn
+                href="https://facebook.com/ntd4996"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, y: -2 }}
