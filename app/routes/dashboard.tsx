@@ -3,6 +3,7 @@ import { useLoaderData, useFetcher } from "@remix-run/react";
 import connectDB from "~/utils/mongo.server";
 import ShortUrl from "~/models/ShortUrl";
 import AnimatedBackground from "~/components/AnimatedBackground";
+import { useState } from "react";
 
 export const loader: LoaderFunction = async () => {
   connectDB();
@@ -22,6 +23,11 @@ export const loader: LoaderFunction = async () => {
 export default function Dashboard() {
   const { urls, error } = useLoaderData<typeof loader>();
   const deleteFetcher = useFetcher();
+  const [showModal, setShowModal] = useState(false);
+  const [urlToDelete, setUrlToDelete] = useState<{
+    _id: string;
+    shortCode: string;
+  } | null>(null);
 
   let isAdmin = false;
   if (typeof window !== "undefined") {
@@ -42,6 +48,57 @@ export default function Dashboard() {
           ) / urls.length
         )
       : 0,
+  };
+
+  const DeleteConfirmationModal = () => {
+    if (!showModal) return null;
+
+    const handleDelete = () => {
+      if (!urlToDelete) return;
+
+      deleteFetcher.submit(null, {
+        method: "DELETE",
+        action: `/api/delete-url?urlId=${urlToDelete._id}`,
+      });
+      setShowModal(false);
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div
+          role="button"
+          tabIndex={0}
+          className="fixed inset-0 bg-black/50 transition-opacity duration-300"
+          onClick={() => setShowModal(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setShowModal(false);
+            }
+          }}
+        />
+        <div className="relative z-50 w-full max-w-md transform rounded-lg bg-gray-800 p-6 shadow-xl transition-all duration-300 animate-[fadeIn_0.3s_ease-in-out]">
+          <h3 className="mb-4 text-xl font-bold">Xác nhận xóa</h3>
+          <p className="mb-6">
+            Bạn có chắc chắn muốn xóa URL rút gọn &quot;{urlToDelete?.shortCode}
+            &quot;?
+          </p>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={() => setShowModal(false)}
+              className="rounded bg-gray-600 px-4 py-2 hover:bg-gray-700 transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleDelete}
+              className="rounded bg-red-500 px-4 py-2 hover:bg-red-600 transition-colors"
+            >
+              Xóa
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (error) {
@@ -118,24 +175,19 @@ export default function Dashboard() {
                         </td>
                         {isAdmin && (
                           <td className="border p-3">
-                            <deleteFetcher.Form
-                              method="DELETE"
-                              action={`/api/delete-url?urlId=${url._id}`}
-                              onSubmit={(e) => {
-                                if (
-                                  !confirm("Bạn có chắc chắn muốn xóa URL này?")
-                                ) {
-                                  e.preventDefault();
-                                }
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setUrlToDelete({
+                                  _id: url._id,
+                                  shortCode: url.shortCode,
+                                });
+                                setShowModal(true);
                               }}
+                              className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                             >
-                              <button
-                                type="submit"
-                                className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
-                              >
-                                Xóa
-                              </button>
-                            </deleteFetcher.Form>
+                              Xóa
+                            </button>
                           </td>
                         )}
                       </tr>
@@ -151,6 +203,7 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+      <DeleteConfirmationModal />
     </div>
   );
 }

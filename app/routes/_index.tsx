@@ -360,7 +360,7 @@ export default function Index() {
                               animate={{ scale: 1 }}
                               className="absolute -inset-1"
                             >
-                              {[...Array(6)].map((_, i) => (
+                              {[...Array(12)].map((_, i) => (
                                 <motion.span
                                   key={i}
                                   className="absolute h-2 w-2 rounded-full bg-green-300"
