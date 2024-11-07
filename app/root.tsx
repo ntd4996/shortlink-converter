@@ -32,6 +32,7 @@ export default function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <title>URL Shortener by DatNT</title>
       </head>
       <body className="h-full" suppressHydrationWarning={true}>
         <div className="min-h-full">
