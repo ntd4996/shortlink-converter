@@ -1,5 +1,6 @@
 import {
   Links,
+  // LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -8,6 +9,7 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
+import Navigation from "~/components/Navigation";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,17 +24,22 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export default function App() {
   return (
-    <html lang="en">
+    <html lang="vi" className="h-full">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="h-full" suppressHydrationWarning={true}>
+        <div className="min-h-full">
+          <Navigation />
+          <main className="pt-16">
+            <Outlet />
+          </main>
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -40,6 +47,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <html lang="vi" className="h-full">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body className="h-full" suppressHydrationWarning={true}>
+        <div className="flex h-screen items-center justify-center">
+          <div className="rounded-lg bg-red-100 p-6 text-red-700">
+            <h1 className="text-lg font-bold">Có lỗi xảy ra!</h1>
+            <p>{error?.message}</p>
+          </div>
+        </div>
+        <Scripts />
+      </body>
+    </html>
+  );
 }
